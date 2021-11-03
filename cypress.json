@@ -1,0 +1,15 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "componentFolder": "src/components",
+  "downloadsFolder": "test/cypress/downloads",
+  "fixturesFolder": "test/cypress/fixtures",
+  "integrationFolder": "test",
+  "pluginsFile": "test/cypress/plugins/index.ts",
+  "screenshotsFolder": "test/cypress/screenshots",
+  "supportFile": "test/cypress/support/index.ts",
+  "videosFolder": "test/cypress/videos",
+  "testFiles": "**/*.spec.ts",
+  "cypress-watch-and-reload": {
+    "watch": ["src/**"]
+  }
+}
