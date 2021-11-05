@@ -2,9 +2,10 @@ import { startDevServer } from '@cypress/vite-dev-server';
 import path from 'path';
 import createBundler from '@bahmutov/cypress-esbuild-preprocessor';
 
-import 'cypress-watch-and-reload/plugins';
-
 const plugin: Cypress.PluginConfig = (on, config) => {
+  // eslint-disable-next-line global-require
+  require(`cypress-watch-and-reload/plugins`)(config);
+
   let bundler = createBundler({
     define: {
       global: `window`,
