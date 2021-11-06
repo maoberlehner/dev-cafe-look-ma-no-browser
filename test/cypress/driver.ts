@@ -1,19 +1,22 @@
+import { configure } from '@testing-library/cypress';
+
 import {
   AssertShouldExist,
   AssertShouldNotExist,
-  AssertTextShouldExist,
-  AssertTextShouldNotExist,
   Click,
-  ClickText,
   GoTo,
+  Matcher,
   Precondition,
   QueueMock,
   Run,
   Step,
   Submit,
-  TestId,
   Type,
 } from '../types';
+
+configure({
+  testIdAttribute: `data-qa`,
+});
 
 export const run: Run = (steps: Step[] = []) => () => {
   // eslint-disable-next-line no-restricted-syntax
@@ -28,44 +31,50 @@ export const goTo: GoTo<void> = (view) => {
   cy.window().should(`have.property`, `appReady`, true);
 };
 
-const getElement = (testId: TestId) => cy.get(`[data-qa="${testId}"]`);
+const get = (matcher: Matcher): Cypress.Chainable => {
+  let container = matcher.within ? get(matcher.within) : cy.get(`body`);
+  let match = null;
+  let index = matcher.nth ? matcher.nth - 1 : 0;
 
-const getText = (text: string) => cy.contains(text);
+  if (matcher.testId) {
+    match = container.findAllByTestId(matcher.testId).eq(index);
+  }
+  if (matcher.role && matcher.name) {
+    match = container.findAllByRole(matcher.role, { name: matcher.name }).eq(index);
+  }
+  if (matcher.text) {
+    match = container.findAllByText(matcher.text).eq(index);
+  }
 
-export const type: Type<void> = (testId, text) => {
-  getElement(testId).type(text);
+  if (!match) {
+    throw new Error(`Either testId, role + name or text is required!`);
+  }
+
+  return match;
 };
 
-export const click: Click<void> = (testId) => {
-  getElement(testId).click();
+export const type: Type<void> = (matcher, text) => {
+  get(matcher).type(text);
 };
 
-export const clickText: ClickText<void> = (text) => {
-  getText(text).click();
+export const click: Click<void> = (matcher) => {
+  get(matcher).click();
 };
 
-export const submit: Submit<void> = (testId) => {
-  getElement(testId).submit();
+export const submit: Submit<void> = (matcher) => {
+  get(matcher).submit();
 };
 
-function should(testId: TestId, condition: string) {
-  return getElement(testId).should(condition);
+function should(matcher: Matcher, condition: string) {
+  return get(matcher).should(condition);
 }
 
-export const assertShouldExist: AssertShouldExist<void> = (testId) => {
-  should(testId, `exist`);
+export const assertShouldExist: AssertShouldExist<void> = (matcher) => {
+  should(matcher, `exist`);
 };
 
-export const assertShouldNotExist: AssertShouldNotExist<void> = (testId) => {
-  should(testId, `not.exist`);
-};
-
-export const assertTextShouldExist: AssertTextShouldExist<void> = (text) => {
-  getText(text).should(`exist`);
-};
-
-export const assertTextShouldNotExist: AssertTextShouldNotExist<void> = (text) => {
-  getText(text).should(`not.exist`);
+export const assertShouldNotExist: AssertShouldNotExist<void> = (matcher) => {
+  should(matcher, `not.exist`);
 };
 
 export const queueMockMsw: QueueMock = ({

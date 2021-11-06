@@ -1,27 +1,26 @@
 import {
   configure,
-  findByTestId as findByTestIdOriginal,
-  findByText as findByTextOriginal,
+  findAllByRole,
+  findAllByTestId,
+  findAllByText,
   fireEvent,
-  queryByTestId as queryByTestIdOriginal,
-  queryByText as queryByTextOriginal,
+  queryAllByRole,
+  queryAllByTestId,
+  queryAllByText,
 } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
 import {
   AssertShouldExist,
   AssertShouldNotExist,
-  AssertTextShouldExist,
-  AssertTextShouldNotExist,
   Click,
-  ClickText,
   GoTo,
+  Matcher,
   Precondition,
   QueueMock,
   Run,
   Step,
   Submit,
-  TestId,
   Type,
 } from '../types';
 import { rest, server } from '../utils/msw-node';
@@ -30,14 +29,10 @@ configure({
   testIdAttribute: `data-qa`,
 });
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 beforeAll(() => {
   server.listen();
 });
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 afterAll(() => {
   server.close();
 });
@@ -52,14 +47,6 @@ export const run: Run = (steps: Step[] = []) => async () => {
   }
 };
 
-const findByTestId = (testId: TestId) => findByTestIdOriginal(document, testId);
-
-const queryByTestId = (testId: TestId) => queryByTestIdOriginal(document, testId);
-
-const findByText = (text: string) => findByTextOriginal(document, text);
-
-const queryByText = (text: string) => queryByTextOriginal(document, text);
-
 export const goTo: GoTo<Promise<void>> = async (view) => {
   jsdom.reconfigure({ url: `http://localhost:3000${view}` });
   document.body.innerHTML = `<div id="app"></div>`;
@@ -67,37 +54,70 @@ export const goTo: GoTo<Promise<void>> = async (view) => {
   return mount();
 };
 
-export const type: Type<Promise<void>> = async (testId, text) => {
-  userEvent.type(await findByTestId(testId), text);
+const query = (matcher: Matcher): HTMLElement => {
+  let container = matcher.within ? query(matcher.within) : document.body;
+  let match = null;
+  let index = matcher.nth ? matcher.nth - 1 : 0;
+
+  if (matcher.testId) {
+    match = queryAllByTestId(container, matcher.testId)[index];
+  }
+  if (matcher.role) {
+    match = queryAllByRole(container, matcher.role, { name: matcher.name })[index];
+  }
+  if (matcher.text) {
+    match = queryAllByText(container, matcher.text)[index];
+  }
+
+  if (!match) {
+    throw new Error(`Either testId, role + name or text is required!`);
+  }
+
+  return match;
 };
 
-export const click: Click<Promise<void>> = async (testId) => {
-  userEvent.click(await findByTestId(testId));
+const find = async (matcher: Matcher): Promise<HTMLElement> => {
+  let container = matcher.within ? await find(matcher.within) : document.body;
+  let match = null;
+  let index = matcher.nth ? matcher.nth - 1 : 0;
+
+  if (matcher.testId) {
+    match = (await findAllByTestId(container, matcher.testId))[index];
+  }
+  if (matcher.role && matcher.name) {
+    match = (await findAllByRole(container, matcher.role, { name: matcher.name }))[index];
+  }
+  if (matcher.text) {
+    match = (await findAllByText(container, matcher.text))[index];
+  }
+
+  if (!match) {
+    throw new Error(`Either testId, role + name or text is required!`);
+  }
+
+  return match;
 };
 
-export const clickText: ClickText<Promise<void>> = async (text) => {
-  userEvent.click(await findByText(text));
+export const type: Type<Promise<void>> = async (matcher: Matcher, text) => {
+  userEvent.type(await find(matcher), text);
 };
 
-export const submit: Submit<Promise<void>> = async (testId) => {
-  fireEvent.submit(await findByTestId(testId));
+export const click: Click<Promise<void>> = async (matcher: Matcher) => {
+  userEvent.click(await find(matcher));
 };
 
-export const assertShouldExist: AssertShouldExist<Promise<void>> = async (testId) => {
-  expect(await findByTestId(testId)).toBeTruthy();
+export const submit: Submit<Promise<void>> = async (matcher: Matcher) => {
+  fireEvent.submit(await find(matcher));
 };
 
-export const assertShouldNotExist: AssertShouldNotExist<Promise<void>> = async (testId) => {
-  expect(queryByTestId(testId)).toBeFalsy();
+export const assertShouldExist: AssertShouldExist<Promise<void>> = async (matcher: Matcher) => {
+  expect(await find(matcher)).toBeTruthy();
 };
 
-export const assertTextShouldExist: AssertTextShouldExist<Promise<void>> = async (text) => {
-  expect(await findByText(text)).toBeTruthy();
-};
-
-export const assertTextShouldNotExist: AssertTextShouldNotExist<Promise<void>> = async (text) => {
-  expect(await queryByText(text)).toBeFalsy();
-};
+export const assertShouldNotExist:
+  AssertShouldNotExist<Promise<void>> = async (matcher: Matcher) => {
+    expect(query(matcher)).toBeFalsy();
+  };
 
 const queueMockMsw: QueueMock = ({
   action,
