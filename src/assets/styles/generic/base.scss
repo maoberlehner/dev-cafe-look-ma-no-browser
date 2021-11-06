@@ -45,6 +45,28 @@ svg {
   vertical-align: middle;
 }
 
+h1,
+h2,
+h3 {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 2.75em;
+}
+
+h2 {
+  font-size: 2.25em;
+}
+
+h3 {
+  font-size: 1.75em;
+}
+
+strong {
+  font-weight: bold;
+}
+
 ::-moz-selection {
   background: $color-primary;
   text-shadow: none;
