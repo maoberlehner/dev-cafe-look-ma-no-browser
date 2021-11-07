@@ -7,12 +7,12 @@ import {
 } from 'vue-router';
 
 import App from './components/App.vue';
-import PageX from './components/PageX.vue';
+import PageProductList from './components/PageProductList.vue';
 
 let routes = [
   {
-    component: PageX,
-    name: `X`,
+    component: PageProductList,
+    name: `product-list`,
     path: `/`,
   },
 ];

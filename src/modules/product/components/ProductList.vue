@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <h1>Page X</h1>
-  </div>
+  <ul
+    class="ProductList"
+  />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: `PageX`,
+  name: `ProductList`,
 });
 </script>

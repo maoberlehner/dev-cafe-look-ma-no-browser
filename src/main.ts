@@ -28,8 +28,8 @@ async function prepare() {
 
   // During development, load preconditions for the use case you are working on.
   // await Promise.all([
-  //   (await import(`./modules/__MODULE__/__test__/__MODULE__-preconditions`))
-  //     .XListExists({ queueMock, window }),
+  //   (await import(`./modules/product/__test__/product-preconditions`))
+  //     .listExists({ queueMock, window }),
   // ]);
 
   window.appReady = true;
