@@ -70,7 +70,7 @@ const query = (matcher: Matcher): HTMLElement => {
   }
 
   if (!match) {
-    throw new Error(`Either testId, role + name or text is required!`);
+    throw new Error(`Either testId, role + name, or text is required!`);
   }
 
   return match;
@@ -92,7 +92,7 @@ const find = async (matcher: Matcher): Promise<HTMLElement> => {
   }
 
   if (!match) {
-    throw new Error(`Either testId, role + name or text is required!`);
+    throw new Error(`Either testId, role + name, or text is required!`);
   }
 
   return match;

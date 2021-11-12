@@ -47,7 +47,7 @@ const get = (matcher: Matcher): Cypress.Chainable => {
   }
 
   if (!match) {
-    throw new Error(`Either testId, role + name or text is required!`);
+    throw new Error(`Either testId, role + name, or text is required!`);
   }
 
   return match;
