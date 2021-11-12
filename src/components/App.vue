@@ -18,8 +18,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '../assets/styles/styles.scss';
-
 body {
   max-width: 42em;
   margin-right: auto;
