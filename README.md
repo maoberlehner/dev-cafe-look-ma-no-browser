@@ -6,7 +6,7 @@ Using this setup makes it possible to run the same test code in Cypress and Jest
 
 ## Getting Started
 
-- Run `yarn` to install all dependencies.
+- Run `npm install` to install all dependencies.
 - Run `npm run dev` to start the Vite dev server. Make sure you can navigate to `http://localhost:3000`.
 - Run `npx cypress run` to run all (currently only one) tests with Cypress in headless mode.
 - Run `npx cypress open` to open the Cypress UI.
