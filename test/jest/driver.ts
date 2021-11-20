@@ -10,19 +10,20 @@ import {
 } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 
-import {
+import type {
   AssertShouldExist,
   AssertShouldNotExist,
   Click,
   GoTo,
   Matcher,
-  Precondition,
-  QueueMock,
+  Prepare,
+  QueueApiMock,
   Run,
   Step,
   Submit,
   Type,
 } from '../types';
+import { makeStrategy } from '../strategies/mocking';
 import { rest, server } from '../utils/msw-node';
 
 configure({
@@ -46,6 +47,21 @@ export const run: Run = (steps: Step[] = []) => async () => {
     if (Array.isArray(result)) await Promise.all(result.map(x => x()));
   }
 };
+
+export const queueApiMock: QueueApiMock = ({
+  body,
+  endpoint,
+  httpVerb,
+  status = 200,
+}) => {
+  server.use(
+    rest[httpVerb](endpoint, (req, res, ctx) => res(ctx.status(status), ctx.json(body))),
+  );
+};
+
+export const prepare: Prepare = (precondition): void => precondition(makeStrategy({
+  queueApiMock,
+}));
 
 export const goTo: GoTo<Promise<void>> = async (view) => {
   jsdom.reconfigure({ url: `http://localhost:3000${view}` });
@@ -118,19 +134,3 @@ export const assertShouldNotExist:
   AssertShouldNotExist<Promise<void>> = async (matcher: Matcher) => {
     expect(query(matcher)).toBeFalsy();
   };
-
-const queueMockMsw: QueueMock = ({
-  action,
-  body,
-  endpoint,
-  status = 200,
-}) => {
-  server.use(
-    rest[action](endpoint, (req, res, ctx) => res(ctx.status(status), ctx.json(body))),
-  );
-};
-
-export const prepare = (precondition: Precondition): void => precondition({
-  queueMock: queueMockMsw,
-  window,
-});

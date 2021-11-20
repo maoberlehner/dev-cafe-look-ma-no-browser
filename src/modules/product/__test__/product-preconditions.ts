@@ -1,10 +1,10 @@
 import type { Precondition } from '../../../../test/types';
 import ProductListDefault from './data/product-list-default.json';
 
-const ENDPOINT_PRODUCTS = `/api/products`;
+const TOPIC = `product-list`;
 
-export const listExists: Precondition = ({ queueMock }) => queueMock({
-  action: `get`,
+export const listExists: Precondition = ({ setup }) => setup({
+  action: `read`,
   body: { data: ProductListDefault },
-  endpoint: ENDPOINT_PRODUCTS,
+  topic: TOPIC,
 });

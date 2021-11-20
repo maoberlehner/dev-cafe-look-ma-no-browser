@@ -1,6 +1,5 @@
-import * as cypressDriver from './test/cypress/driver';
-import * as jestDriver from './test/jest/driver';
+import type { Driver } from './test/types';
 
 declare global {
-  let driver: typeof cypressDriver|typeof jestDriver;
+  let driver: Driver;
 }

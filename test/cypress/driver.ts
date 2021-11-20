@@ -1,18 +1,19 @@
 import { configure } from '@testing-library/cypress';
 
-import {
+import type {
   AssertShouldExist,
   AssertShouldNotExist,
   Click,
   GoTo,
   Matcher,
-  Precondition,
-  QueueMock,
+  Prepare,
+  QueueApiMock,
   Run,
   Step,
   Submit,
   Type,
 } from '../types';
+import { makeStrategy } from '../strategies/mocking';
 
 configure({
   testIdAttribute: `data-qa`,
@@ -25,6 +26,29 @@ export const run: Run = (steps: Step[] = []) => () => {
     if (Array.isArray(result)) result.forEach(x => x());
   }
 };
+
+export const queueApiMock: QueueApiMock = ({
+  body,
+  endpoint,
+  httpVerb,
+  status = 200,
+}) => {
+  cy.window().then(({ localStorage }) => {
+    let mocksRaw = localStorage.getItem(`NETWORK_MOCKS`);
+    let mocks = mocksRaw ? JSON.parse(mocksRaw) : [];
+
+    return localStorage.setItem(`NETWORK_MOCKS`, JSON.stringify([...mocks, {
+      body,
+      endpoint,
+      httpVerb,
+      status,
+    }]));
+  });
+};
+
+export const prepare: Prepare = (precondition): void => precondition(makeStrategy({
+  queueApiMock,
+}));
 
 export const goTo: GoTo<void> = (view) => {
   cy.visit(view);
@@ -75,30 +99,4 @@ export const assertShouldExist: AssertShouldExist<void> = (matcher) => {
 
 export const assertShouldNotExist: AssertShouldNotExist<void> = (matcher) => {
   should(matcher, `not.exist`);
-};
-
-export const queueMockMsw: QueueMock = ({
-  action,
-  body,
-  endpoint,
-  status = 200,
-}) => {
-  cy.window().then(({ localStorage }) => {
-    let mocksRaw = localStorage.getItem(`NETWORK_MOCKS`);
-    let mocks = mocksRaw ? JSON.parse(mocksRaw) : [];
-
-    return localStorage.setItem(`NETWORK_MOCKS`, JSON.stringify([...mocks, {
-      action,
-      body,
-      endpoint,
-      status,
-    }]));
-  });
-};
-
-export const prepare = (precondition: Precondition): void => {
-  cy.window().then(window => precondition({
-    queueMock: queueMockMsw,
-    window,
-  }));
 };
