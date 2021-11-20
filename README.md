@@ -15,16 +15,16 @@ Using this setup makes it possible to run the same test code in Cypress and Jest
 During development, you can use the mocking system based on Mock Service Worker. In `src/main.ts` you can activate the following code to use mocks for development.
 
 ```diff
-   mocks.forEach(mock => queueMock(mock));
+   mocks.forEach(mock => queueApiMock(mock));
 
    // During development, load preconditions for the use case you are working on.
 -  // await Promise.all([
--  //   (await import(`./modules/products/__specs__/preconditions`))
--  //     .productListExists({ queueMock }),
+-  //   (await import(`./modules/product/__test__/product-preconditions`))
+-  //     .listExists(makeStrategy({ queueApiMock })),
 -  // ]);
 +  await Promise.all([
-+    (await import(`./modules/products/__specs__/preconditions`))
-+      .productListExists({ queueMock }),
++    (await import(`./modules/product/__test__/product-preconditions`))
++      .listExists(makeStrategy({ queueApiMock })),
 +  ]);
 
    window.appReady = true;
