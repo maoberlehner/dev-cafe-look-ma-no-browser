@@ -45,3 +45,155 @@ Test code is decoupled from the test framework via a DSL (Domain Specific Langua
 - [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/)
 - [Vue.js](https://vuejs.org/)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# What?
+
+- Very, very simple e commerce app.
+- Built on top of Vue 3 and TypeScript.
+- Built without looking at the browser!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Why?
+
+1. It's a challenge!
+2. It's a demonstration of TDD.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## TDD
+
+🔴 Red
+🟢 Green
+🔄 Refactor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Disclaimer
+
+Live Is Life! This talk unfortunately not :(
+
+We'll do this fast!
+
+1. It's kinda the point.
+2. Keep it short(ish).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## What have we learned?
+
+- TDD is fast!
+- TDD allows us to refactor our code with confidence.
+
+> Let's uninstall our browsers and **practice TDD!**
