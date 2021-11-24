@@ -8,7 +8,7 @@
       class="ProductList__item"
     >
       <div>{{ product.name }}</div>
-      <button @click="addToCart(product)">
+      <button @click="$emit('addProduct', product)">
         Add to cart
       </button>
     </li>
@@ -19,20 +19,17 @@
 import { defineComponent, ref } from 'vue';
 
 import { getList, Product } from '../service/product-service';
-import { useCart } from '../../checkout/composables/cart';
 
 export default defineComponent({
   name: `ProductList`,
+  emits: [`addProduct`],
   setup() {
     let products = ref<Product[]>([]);
     (async () => {
       products.value = await getList();
     })();
 
-    let { add: addToCart } = useCart();
-
     return {
-      addToCart,
       products,
     };
   },

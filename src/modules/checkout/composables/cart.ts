@@ -1,6 +1,6 @@
-import { ref, readonly, computed } from 'vue';
+import { computed, readonly, ref } from 'vue';
 
-type LineItem = {
+export type LineItem = {
   id: number,
   price: number,
 }
